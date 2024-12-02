@@ -10,7 +10,7 @@ db = firestore.client()
 
 # Intentar acceder a una colección
 try:
-    docs = db.collection("test").stream()  # Cambia "test" por el nombre de una colección existente
+    docs = db.collection("id").stream()  # Cambia "test" por el nombre de una colección existente
     for doc in docs:
         print(f"{doc.id} => {doc.to_dict()}")
     print("¡Conexión exitosa a Firestore!")
