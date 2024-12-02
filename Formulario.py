@@ -5,7 +5,7 @@ from firebase_admin import credentials, firestore
 # Inicializar Firebase con las credenciales
 def init_firebase():
     try:
-        cred = credentials.Certificate("ruta_al_archivo_credencial.json")  # Cambia a tu archivo
+        cred = credentials.Certificate("formulario-211c0-firebase-adminsdk-3tiuf-1b8c819c76.json")  # Cambia a tu archivo
         firebase_admin.initialize_app(cred)
     except ValueError:
         st.warning("Firebase ya está inicializado")
