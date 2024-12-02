@@ -16,16 +16,32 @@ def get_firestore_client():
         init_firebase()
     return firestore.client()
 
-# Guardar datos en Firebase
-def guardar_en_firestore(data):
-    db = get_firestore_client()
-    doc_ref = db.collection("formulario").add(data)
-    return doc_ref
+# Verificar conexión con Firebase
+def verificar_conexion():
+    try:
+        db = get_firestore_client()
+        # Intentar listar colecciones como prueba
+        colecciones = db.collections()
+        nombres_colecciones = [col.id for col in colecciones]
+        return True, nombres_colecciones
+    except Exception as e:
+        return False, str(e)
 
-# Interfaz del formulario
+# Verificar conexión antes de mostrar el formulario
 st.title("Formulario y Firebase")
 
-# Crear el formulario
+st.subheader("Verificación de conexión con Firebase")
+conexion_exitosa, resultado = verificar_conexion()
+
+if conexion_exitosa:
+    st.success("¡Conexión exitosa con Firebase!")
+    st.write("Colecciones disponibles:", resultado)
+else:
+    st.error("Error al conectar con Firebase")
+    st.write("Detalles del error:", resultado)
+    st.stop()  # Detener la ejecución si no hay conexión
+
+# Crear el formulario solo si la conexión es exitosa
 with st.form("mi_formulario"):
     nombre = st.text_input("Nombre")
     correo = st.text_input("Correo electrónico")
@@ -43,7 +59,7 @@ if enviado:
             "mensaje": mensaje,
         }
         try:
-            doc_ref = guardar_en_firestore(datos)
+            doc_ref = get_firestore_client().collection("formulario").add(datos)
             st.success(f"¡Datos guardados con éxito! ID del documento: {doc_ref[1].id}")
         except Exception as e:
             st.error(f"Error al guardar los datos: {e}")
