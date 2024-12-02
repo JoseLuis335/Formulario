@@ -1,74 +1,51 @@
 import streamlit as st
-import pandas as pd
-import seaborn as sns
-import matplotlib.pyplot as plt
+import firebase_admin
+from firebase_admin import credentials, firestore
 
-# Configurar estilo de Seaborn
-sns.set(style="white")
+# Inicializar Firebase con las credenciales
+def init_firebase():
+    try:
+        cred = credentials.Certificate("ruta_al_archivo_credencial.json")  # Cambia a tu archivo
+        firebase_admin.initialize_app(cred)
+    except ValueError:
+        st.warning("Firebase ya está inicializado")
 
-# Cargar datos
-ruta_archivo = r"C:\Users\jose.valdez\Desktop\python\jose luis\Correlaciones\Gráficos Dinamicos\Streamlit\Resumen_Cartera_Morosidad.xlsx"
-hojas_disponibles = pd.ExcelFile(ruta_archivo).sheet_names
+# Conectar a Firestore
+def get_firestore_client():
+    if not firebase_admin._apps:
+        init_firebase()
+    return firestore.client()
 
-# Obtener las hojas disponibles en el archivo
-hojas_disponibles = pd.ExcelFile(ruta_archivo).sheet_names
+# Guardar datos en Firebase
+def guardar_en_firestore(data):
+    db = get_firestore_client()
+    doc_ref = db.collection("formulario").add(data)
+    return doc_ref
 
-# Título de la aplicación
-st.title("Análisis de Cartera y Morosidad")
+# Interfaz del formulario
+st.title("Formulario y Firebase")
 
-# Selección de la hoja
-hoja = st.selectbox("Selecciona la hoja:", hojas_disponibles)
+# Crear el formulario
+with st.form("mi_formulario"):
+    nombre = st.text_input("Nombre")
+    correo = st.text_input("Correo electrónico")
+    edad = st.number_input("Edad", min_value=1, max_value=120, step=1)
+    mensaje = st.text_area("Mensaje")
+    enviado = st.form_submit_button("Enviar")
 
-# Cargar los datos de la hoja seleccionada
-df = pd.read_excel(ruta_archivo, sheet_name=hoja)
-
-# Selección de negocio y plazo
-negocios = df["NEGOCIO"].unique()
-negocio = st.selectbox("Selecciona el negocio:", negocios)
-plazo_meses = st.slider("Selecciona el plazo (en meses):", min_value=1, max_value=24, value=6)
-
-# Filtrar los datos según el negocio y plazo, y eliminar filas con valores nulos o cero en RRR y RRR (con margen)
-df_filtrado = df[(df["NEGOCIO"] == negocio) & (df["PLAZO MESES"] == plazo_meses)]
-df_filtrado = df_filtrado.dropna(subset=["RRR", "RRR (con margen)", "%USGAAP 90 PONDERADO"])
-df_filtrado = df_filtrado[(df_filtrado["RRR"] != 0) & (df_filtrado["RRR (con margen)"] != 0)]
-
-# Ordenar el DataFrame por RRR de mayor a menor
-df_filtrado = df_filtrado.sort_values(by='RRR', ascending=False)
-
-# Crear gráfico con dos ejes
-fig, ax1 = plt.subplots(figsize=(20, 8))
-
-# Graficar las barras de RRR
-barplot = sns.barplot(
-    x='DEPARTAMENTO / PRODUCTO',
-    y='RRR',
-    data=df_filtrado,
-    palette="coolwarm",
-    dodge=False,
-    edgecolor='black',
-    ax=ax1
-)
-
-# Agregar etiquetas a las barras de RRR
-for i, row in enumerate(df_filtrado.itertuples()):
-    barplot.text(i, row.RRR + 0.02, f"{row.RRR:.1f}x", 
-                 color='black', ha="center", fontweight='bold', fontsize=10)
-
-# Configuraciones de gráfico para el eje de barras
-ax1.set_xlabel("Departamento / Producto", fontsize=12)
-ax1.set_ylabel("RRR", fontsize=12)
-ax1.set_title(f"Gráfico de barras para {negocio} - {plazo_meses} meses", fontsize=14)
-ax1.tick_params(axis='x', rotation=80, labelsize=10)
-
-# Crear un segundo eje y graficar %USGAAP 90 PONDERADO como una línea
-ax2 = ax1.twinx()
-ax2.plot(df_filtrado['DEPARTAMENTO / PRODUCTO'], df_filtrado['%USGAAP 90 PONDERADO'], 
-         color='red', marker='o', linewidth=2, label="%USGAAP 90 PONDERADO")
-ax2.set_ylabel("%USGAAP 90 PONDERADO", fontsize=12, color='red')
-ax2.tick_params(axis='y', labelcolor='red')
-
-# Ajustar el gráfico para evitar superposición
-fig.tight_layout()
-
-# Mostrar el gráfico en Streamlit
-st.pyplot(fig)
+# Procesar el formulario al enviar
+if enviado:
+    if nombre and correo and edad:
+        datos = {
+            "nombre": nombre,
+            "correo": correo,
+            "edad": edad,
+            "mensaje": mensaje,
+        }
+        try:
+            doc_ref = guardar_en_firestore(datos)
+            st.success(f"¡Datos guardados con éxito! ID del documento: {doc_ref[1].id}")
+        except Exception as e:
+            st.error(f"Error al guardar los datos: {e}")
+    else:
+        st.error("Por favor, completa todos los campos obligatorios.")
