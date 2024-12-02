@@ -4,7 +4,7 @@ from firebase_admin import credentials, firestore
 
 # Inicializar Firebase solo si no está ya inicializada
 if not firebase_admin._apps:
-    cred = credentials.Certificate("formulario-211c0-firebase-adminsdk-3tiuf-c2a601f827.json")
+    cred = credentials.Certificate("formulario-211c0-firebase-adminsdk-3tiuf-b3f5f668be.json")
     firebase_admin.initialize_app(cred)
 
 # Conectar a Firestore
