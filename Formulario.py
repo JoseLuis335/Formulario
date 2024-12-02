@@ -2,7 +2,7 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 
 # Inicializar Firebase
-cred = credentials.Certificate("formulario-211c0-firebase-adminsdk-3tiuf-c2a601f827.json")
+cred = credentials.Certificate("formulario-211c0-firebase-adminsdk-3tiuf-1b8c819c76.json")
 firebase_admin.initialize_app(cred)
 
 # Conectar a Firestore
