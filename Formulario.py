@@ -1,6 +1,7 @@
 import streamlit as st
 import firebase_admin
 from firebase_admin import credentials, firestore
+import pandas as pd
 
 # Inicializar Firebase solo si no está ya inicializada
 if not firebase_admin._apps:
@@ -21,10 +22,64 @@ if not firebase_admin._apps:
 # Conectar a Firestore
 db = firestore.client()
 
-# Probar la conexión
+# Leer las opciones desde el archivo DOMICILIOS.xlsx
 try:
-    doc_ref = db.collection("test").document("test_doc")
-    doc_ref.set({"status": "connected"})
-    st.success("Conexión exitosa a Firestore")
+    domicilios_df = pd.read_excel("DOMICILIOS.xlsx")
+    tiendas = domicilios_df["Tienda"].unique().tolist()
+    municipios = domicilios_df["Municipio"].unique().tolist()
+    estados = domicilios_df["Estado"].unique().tolist()
 except Exception as e:
-    st.error(f"Error al conectar con Firestore: {e}")
+    st.error(f"Error al leer el archivo DOMICILIOS.xlsx: {e}")
+    tiendas, municipios, estados = [], [], []
+
+# Título de la app
+st.title("Registro de Domicilios")
+
+# Formulario para registrar un domicilio
+with st.form("registro_domicilio"):
+    st.subheader("Registrar un nuevo domicilio")
+
+    tienda = st.selectbox("Selecciona la tienda", tiendas)
+    domicilio = st.text_input("Ingresa el domicilio")
+    municipio = st.selectbox("Selecciona el municipio", municipios)
+    estado = st.selectbox("Selecciona el estado", estados)
+    status = st.selectbox("Selecciona el estado de la tienda", ["Abierto", "Cerrado"])
+
+    # Botón para enviar el formulario
+    submitted = st.form_submit_button("Registrar")
+
+    if submitted:
+        if tienda and domicilio and municipio and estado and status:
+            try:
+                # Crear un nuevo documento en Firestore
+                doc_ref = db.collection("DOMICILIOS").document()
+                doc_ref.set({
+                    "Tienda": tienda,
+                    "Domicilio": domicilio,
+                    "Municipio": municipio,
+                    "Estado": estado,
+                    "STATUS": status,
+                })
+                st.success("Domicilio registrado exitosamente")
+            except Exception as e:
+                st.error(f"Error al registrar el domicilio: {e}")
+        else:
+            st.warning("Por favor, completa todos los campos antes de enviar.")
+
+# Mostrar los domicilios registrados
+st.subheader("Domicilios registrados")
+try:
+    domicilios_ref = db.collection("DOMICILIOS")
+    docs = domicilios_ref.stream()
+
+    data = []
+    for doc in docs:
+        data.append(doc.to_dict())
+
+    if data:
+        domicilios_registrados_df = pd.DataFrame(data)
+        st.dataframe(domicilios_registrados_df)
+    else:
+        st.info("No hay domicilios registrados aún.")
+except Exception as e:
+    st.error(f"Error al obtener los domicilios registrados: {e}")
