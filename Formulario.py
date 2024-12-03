@@ -26,6 +26,7 @@ db = firestore.client()
 try:
     domicilios_df = pd.read_excel("DOMICILIOS.xlsx")
     tiendas = domicilios_df["Tienda"].unique().tolist()
+    domicilio = domicilios_df["Domicilio"].unique().tolist()
     municipios = domicilios_df["Municipio"].unique().tolist()
     estados = domicilios_df["Estado"].unique().tolist()
 except Exception as e:
@@ -40,7 +41,7 @@ with st.form("registro_domicilio"):
     st.subheader("Registrar un nuevo domicilio")
 
     tienda = st.selectbox("Selecciona la tienda", tiendas)
-    domicilio = st.text_input("Ingresa el domicilio")
+    domicilio = st.text_input("Ingresa el domicilio", domicilio)
     municipio = st.selectbox("Selecciona el municipio", municipios)
     estado = st.selectbox("Selecciona el estado", estados)
     status = st.selectbox("Selecciona el estado de la tienda", ["Abierto", "Cerrado"])
