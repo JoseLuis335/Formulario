@@ -25,8 +25,9 @@ db = firestore.client()
 # Leer las opciones desde el archivo DOMICILIOS.xlsx
 try:
     domicilios_df = pd.read_excel("DOMICILIOS.xlsx")
+    domicilios_df.columns = domicilios_df.columns.str.strip()
     tiendas = domicilios_df["Tienda"].unique().tolist()
-    domicilio = domicilios_df["Domicilio "].unique().tolist()
+    domicilio = domicilios_df["Domicilio"].unique().tolist()
     municipios = domicilios_df["Municipio"].unique().tolist()
     estados = domicilios_df["Estado"].unique().tolist()
 except Exception as e:
