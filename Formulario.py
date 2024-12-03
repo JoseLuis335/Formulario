@@ -31,7 +31,7 @@ try:
     estados = domicilios_df["Estado"].unique().tolist()
 except Exception as e:
     st.error(f"Error al leer el archivo DOMICILIOS.xlsx: {e}")
-    tiendas,domicilio , municipios, estados = [], [], [], []
+    tiendas, domicilio, municipios, estados = [], [], [], []
 
 # Título de la app
 st.title("Registro de Domicilios")
