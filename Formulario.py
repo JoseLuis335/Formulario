@@ -25,7 +25,6 @@ db = firestore.client()
 # Leer las opciones desde el archivo DOMICILIOS.xlsx
 try:
     domicilios_df = pd.read_excel("DOMICILIOS.xlsx")
-    st.write("Columnas encontradas en el archivo:", domicilios_df.columns.tolist())
     tiendas = domicilios_df["Tienda"].unique().tolist()
     domicilio = domicilios_df["Domicilio "].unique().tolist()
     municipios = domicilios_df["Municipio"].unique().tolist()
