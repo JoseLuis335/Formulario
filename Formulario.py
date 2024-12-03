@@ -15,7 +15,7 @@ if not firebase_admin._apps:
         "token_uri": st.secrets["token_uri"],
         "auth_provider_x509_cert_url": st.secrets["auth_provider_x509_cert_url"],
         "client_x509_cert_url": st.secrets["client_x509_cert_url"],
-        "universe_domain": st.secrets["universe_domain"]
+        "universe_domain": st.secrets["universe_domain"],
     })
     firebase_admin.initialize_app(cred)
 
