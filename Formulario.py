@@ -79,7 +79,7 @@ try:
         domicilios_registrados_df = pd.DataFrame(data)
         st.dataframe(domicilios_registrados_df)
          # Botón para realizar el análisis
-          if st.button("Realizar análisis"):
+        if st.button("Realizar análisis"):
               if "STATUS" in domicilios_registrados_df.columns:
                   status_counts = domicilios_registrados_df["STATUS"].value_counts()
   
