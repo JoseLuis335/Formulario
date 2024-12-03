@@ -82,15 +82,21 @@ try:
         st.dataframe(domicilios_registrados_df)
          # Botón para realizar el análisis
         if st.button("Realizar análisis"):
-              if "STATUS" in domicilios_registrados_df.columns:
-                  status_counts = domicilios_registrados_df["STATUS"].value_counts()
-  
-                  # Crear un gráfico de pastel
-                  fig, ax = plt.subplots()
-                  ax.pie(status_counts, labels=status_counts.index, autopct="%1.1f%%", startangle=90)
-                  ax.axis("equal")  # Para que el gráfico sea circular
-                  
-                  st.pyplot(fig)
+               if "STATUS" in domicilios_registrados_df.columns and not domicilios_registrados_df.empty:
+                    # Contar el número de Abiertos y Cerrados
+                    status_counts = domicilios_registrados_df["STATUS"].value_counts()
+        
+                    # Crear el gráfico de pastel con Plotly
+                    fig = px.pie(
+                        values=status_counts.values,
+                        names=status_counts.index,
+                        title="Distribución de tiendas por estado (Abiertas vs Cerradas)",
+                        color=status_counts.index,  # Colorear por categoría
+                        color_discrete_map={"Abierto": "green", "Cerrado": "red"}  # Personalizar colores
+                    )
+        
+                    # Mostrar el gráfico en Streamlit
+                    st.plotly_chart(fig)
               else:
                   st.warning("No hay información suficiente para realizar el análisis.")
     else:
