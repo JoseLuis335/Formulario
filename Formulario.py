@@ -2,6 +2,8 @@ import streamlit as st
 import firebase_admin
 from firebase_admin import credentials, firestore
 import pandas as pd
+import matplotlib.pyplot as plt
+
 
 # Inicializar Firebase solo si no está ya inicializada
 if not firebase_admin._apps:
