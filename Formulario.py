@@ -97,7 +97,7 @@ try:
         
                     # Mostrar el gráfico en Streamlit
                     st.plotly_chart(fig)
-              else:
+               else:
                   st.warning("No hay información suficiente para realizar el análisis.")
     else:
         st.info("No hay domicilios registrados aún.")
