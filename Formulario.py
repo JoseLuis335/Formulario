@@ -25,24 +25,21 @@ db = firestore.client()
 # Leer las opciones desde el archivo DOMICILIOS.xlsx
 try:
     domicilios_df = pd.read_excel("DOMICILIOS.xlsx")
-    domicilios_df.columns = domicilios_df.columns.str.strip()
+    domicilios_df.columns = domicilios_df.columns.str.strip()  # Eliminar espacios extra
     tiendas = domicilios_df["Tienda"].unique().tolist()
-    domicilio = domicilios_df["Domicilio"].unique().tolist()
+    domicilios = domicilios_df["Domicilio"].unique().tolist()
     municipios = domicilios_df["Municipio"].unique().tolist()
     estados = domicilios_df["Estado"].unique().tolist()
 except Exception as e:
     st.error(f"Error al leer el archivo DOMICILIOS.xlsx: {e}")
-    tiendas, domicilio, municipios, estados = [], [], [], []
-
-# Título de la app
-st.title("Registro de Domicilios")
+    tiendas, domicilios, municipios, estados = [], [], [], []
 
 # Formulario para registrar un domicilio
 with st.form("registro_domicilio"):
     st.subheader("Registrar un nuevo domicilio")
 
     tienda = st.selectbox("Selecciona la tienda", tiendas)
-    domicilio = st.text_input("Ingresa el domicilio", domicilio)
+    domicilio = st.selectbox("Selecciona el domicilio", domicilios)
     municipio = st.selectbox("Selecciona el municipio", municipios)
     estado = st.selectbox("Selecciona el estado", estados)
     status = st.selectbox("Selecciona el estado de la tienda", ["Abierto", "Cerrado"])
