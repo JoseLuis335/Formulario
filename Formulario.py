@@ -78,6 +78,19 @@ try:
     if data:
         domicilios_registrados_df = pd.DataFrame(data)
         st.dataframe(domicilios_registrados_df)
+         # Botón para realizar el análisis
+          if st.button("Realizar análisis"):
+              if "STATUS" in domicilios_registrados_df.columns:
+                  status_counts = domicilios_registrados_df["STATUS"].value_counts()
+  
+                  # Crear un gráfico de pastel
+                  fig, ax = plt.subplots()
+                  ax.pie(status_counts, labels=status_counts.index, autopct="%1.1f%%", startangle=90)
+                  ax.axis("equal")  # Para que el gráfico sea circular
+                  
+                  st.pyplot(fig)
+              else:
+                  st.warning("No hay información suficiente para realizar el análisis.")
     else:
         st.info("No hay domicilios registrados aún.")
 except Exception as e:
