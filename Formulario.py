@@ -38,17 +38,17 @@ except Exception as e:
 with st.form("registro_domicilio"):
     st.subheader("Registrar un nuevo domicilio")
 
-    tienda = st.selectbox("Selecciona la tienda", tiendas)
-    domicilio = st.selectbox("Selecciona el domicilio", domicilios)
-    municipio = st.selectbox("Selecciona el municipio", municipios)
-    estado = st.selectbox("Selecciona el estado", estados)
-    status = st.selectbox("Selecciona el estado de la tienda", ["Abierto", "Cerrado"])
+    tienda = st.selectbox("Selecciona la tienda", ["Selecciona una opción"] + tiendas)
+    domicilio = st.selectbox("Selecciona el domicilio", ["Selecciona una opción"] + domicilios)
+    municipio = st.selectbox("Selecciona el municipio", ["Selecciona una opción"] + municipios)
+    estado = st.selectbox("Selecciona el estado", ["Selecciona una opción"] + estados)
+    status = st.selectbox("Selecciona el estado de la tienda", ["Selecciona una opción", "Abierto", "Cerrado"])
 
     # Botón para enviar el formulario
     submitted = st.form_submit_button("Registrar")
 
     if submitted:
-        if tienda and domicilio and municipio and estado and status:
+        if tienda != "Selecciona una opción" and domicilio != "Selecciona una opción" and municipio != "Selecciona una opción" and estado != "Selecciona una opción" and status != "Selecciona una opción":
             try:
                 # Crear un nuevo documento en Firestore
                 doc_ref = db.collection("DOMICILIOS").document()
