@@ -23,8 +23,8 @@ db = firestore.client()
 
 # Probar la conexión
 try:
-    doc_ref = db.collection("test").document("test_doc")
+    doc_ref = db.collection("id").document("Tienda")
     doc_ref.set({"status": "connected"})
-    st.success("Conexión exitosa a Firestore")
+    print("Conexión exitosa a Firestore")
 except Exception as e:
-    st.error(f"Error al conectar con Firestore: {e}")
+    print(f"Error al conectar con Firestore: {e}")
